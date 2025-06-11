@@ -65,30 +65,61 @@ public class VideojuegoService {
 
     /**
      * Filtra videojuegos por género, plataforma y/o desarrollador
-     * @param generoId ID del género (opcional)
+     * Acepta tanto IDs como nombres para género y desarrollador
+     * @param generoParam nombre del género (opcional)
      * @param plataforma plataforma (opcional)
-     * @param desarrolladorId ID del desarrollador (opcional)
+     * @param desarrolladorParam nombre del desarrollador (opcional)
      * @return lista de videojuegos filtrados
      */
-    public List<VideojuegoDTO> filtrar(String generoId, String plataforma, String desarrolladorId) {
+    public List<VideojuegoDTO> filtrar(String generoParam, String plataforma, String desarrolladorParam) {
         Genero genero = null;
         Desarrollador desarrollador = null;
-        
-        if (generoId != null && !generoId.isEmpty()) {
-            genero = generoRepository.findById(generoId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Género", "id", generoId));
+
+        // Buscar género por nombre si se proporciona
+        if (generoParam != null && !generoParam.isEmpty()) {
+            genero = generoRepository.findByNombre(generoParam)
+                    .orElseThrow(() -> new ResourceNotFoundException("Género", "nombre", generoParam));
         }
-        
-        if (desarrolladorId != null && !desarrolladorId.isEmpty()) {
-            desarrollador = desarrolladorRepository.findById(desarrolladorId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Desarrollador", "id", desarrolladorId));
+
+        // Buscar desarrollador por nombre si se proporciona
+        if (desarrolladorParam != null && !desarrolladorParam.isEmpty()) {
+            desarrollador = desarrolladorRepository.findByNombreEstudio(desarrolladorParam)
+                    .orElseThrow(() -> new ResourceNotFoundException("Desarrollador", "nombre", desarrolladorParam));
         }
-        
-        return videojuegoRepository.findByFilters(genero, plataforma, desarrollador).stream()
+
+        // Aplicar filtros según los parámetros disponibles
+        List<Videojuego> videojuegos;
+
+        if (genero != null && plataforma != null && desarrollador != null) {
+            // Todos los filtros
+            videojuegos = videojuegoRepository.findByGeneroAndPlataformaAndDesarrollador(genero, plataforma, desarrollador);
+        } else if (genero != null && plataforma != null) {
+            // Género y plataforma
+            videojuegos = videojuegoRepository.findByGeneroAndPlataforma(genero, plataforma);
+        } else if (genero != null && desarrollador != null) {
+            // Género y desarrollador
+            videojuegos = videojuegoRepository.findByGeneroAndDesarrollador(genero, desarrollador);
+        } else if (plataforma != null && desarrollador != null) {
+            // Plataforma y desarrollador
+            videojuegos = videojuegoRepository.findByPlataformaAndDesarrollador(plataforma, desarrollador);
+        } else if (genero != null) {
+            // Solo género
+            videojuegos = videojuegoRepository.findByGenero(genero);
+        } else if (plataforma != null) {
+            // Solo plataforma
+            videojuegos = videojuegoRepository.findByPlataforma(plataforma);
+        } else if (desarrollador != null) {
+            // Solo desarrollador
+            videojuegos = videojuegoRepository.findByDesarrollador(desarrollador);
+        } else {
+            // Sin filtros, devolver todos
+            videojuegos = videojuegoRepository.findAll();
+        }
+
+        return videojuegos.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
-
     /**
      * Crea un nuevo videojuego
      * @param dto datos del nuevo videojuego

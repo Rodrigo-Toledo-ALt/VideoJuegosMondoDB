@@ -31,12 +31,10 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    // ✅ SOLO inyectar JwtAuthenticationEntryPoint en el constructor
     public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
-    // ✅ Recibir JwtAuthenticationFilter como parámetro del método
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -46,23 +44,33 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
+                        // ✅ Endpoints públicos
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/videojuegos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/generos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/desarrolladores/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/valoraciones/**").permitAll() // 🆕 GET valoraciones público
 
-                        // Endpoints para administradores
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/videojuegos/**").hasRole("ADMIN")
+                        // ✅ Valoraciones - POST requiere autenticación (cualquier usuario)
+                        .requestMatchers(HttpMethod.POST, "/valoraciones").authenticated()
+
+                        // ✅ Endpoints específicos para ADMIN (videojuegos)
+                        .requestMatchers(HttpMethod.POST, "/videojuegos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/videojuegos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/videojuegos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/generos/**").hasRole("ADMIN")
+
+                        // ✅ Endpoints específicos para ADMIN (géneros)
+                        .requestMatchers(HttpMethod.POST, "/generos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/generos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/generos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/desarrolladores/**").hasRole("ADMIN")
+
+                        // ✅ Endpoints específicos para ADMIN (desarrolladores)
+                        .requestMatchers(HttpMethod.POST, "/desarrolladores").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/desarrolladores/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/desarrolladores/**").hasRole("ADMIN")
+
+                        // ✅ Endpoints de usuarios (solo ADMIN)
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
 
                         // El resto de endpoints requieren autenticación
                         .anyRequest().authenticated()
@@ -85,7 +93,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));  // En producción, especificar orígenes concretos
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization"));
