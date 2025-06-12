@@ -467,3 +467,161 @@ print("Usuario Admin: admin@videojuegos.com / admin123");
 print("Usuario Test: juan@email.com / user123");
 
 print("\n¡Base de datos inicializada correctamente!");
+
+
+
+// ================================================
+// SCRIPT ACTUALIZADO - VIDEOJUEGOS CON IMÁGENES
+// ================================================
+
+print("🎮 ACTUALIZANDO BASE DE DATOS VIDEOJUEGOS CON IMÁGENES 🎮");
+print("=========================================================");
+
+// ================================================
+// ACTUALIZAR VIDEOJUEGOS EXISTENTES CON IMÁGENES
+// ================================================
+print("\n🖼️ Actualizando videojuegos con URLs de imágenes...");
+
+// Actualizar cada videojuego con una URL de imagen
+db.videojuegos.updateOne(
+  { titulo: "The Legend of Zelda: Breath of the Wild" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1w9s.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Cyberpunk 2077" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2rpf.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Grand Theft Auto V" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyd.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "The Last of Us Part II" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wws.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Elden Ring" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co4jni.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Half-Life: Alyx" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1tmk.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Fortnite" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1gai.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "God of War" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1tmu.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Spider-Man: Miles Morales" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co2gdn.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Horizon Zero Dawn" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyo.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "Super Mario Odyssey" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wzs.jpg" } }
+);
+
+db.videojuegos.updateOne(
+  { titulo: "The Witcher 3: Wild Hunt" },
+  { $set: { imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyy.jpg" } }
+);
+
+print("✅ URLs de imágenes añadidas a todos los videojuegos existentes");
+
+// ================================================
+// AGREGAR NUEVOS VIDEOJUEGOS CON IMÁGENES
+// ================================================
+print("\n🎮 Agregando nuevos videojuegos con imágenes...");
+
+var nuevosVideojuegos = db.videojuegos.insertMany([
+  {
+    _id: ObjectId("507f1f77bcf86cd799439060"),
+    titulo: "Red Dead Redemption 2",
+    desarrollador: DBRef("desarrolladores", ObjectId("507f1f77bcf86cd799439023")),
+    genero: DBRef("generos", ObjectId("507f1f77bcf86cd799439011")),
+    plataforma: "PC, PlayStation, Xbox",
+    fechaLanzamiento: ISODate("2018-10-26"),
+    calificacionPEGI: "18+",
+    imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1q1f.jpg"
+  },
+  {
+    _id: ObjectId("507f1f77bcf86cd799439061"),
+    titulo: "Minecraft",
+    desarrollador: DBRef("desarrolladores", ObjectId("507f1f77bcf86cd799439027")),
+    genero: DBRef("generos", ObjectId("507f1f77bcf86cd799439017")),
+    plataforma: "PC, PlayStation, Xbox, Nintendo Switch, Mobile",
+    fechaLanzamiento: ISODate("2011-11-18"),
+    calificacionPEGI: "7+",
+    imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1kec.jpg"
+  },
+  {
+    _id: ObjectId("507f1f77bcf86cd799439062"),
+    titulo: "Among Us",
+    desarrollador: DBRef("desarrolladores", ObjectId("507f1f77bcf86cd799439027")),
+    genero: DBRef("generos", ObjectId("507f1f77bcf86cd799439020")),
+    plataforma: "PC, Mobile, Nintendo Switch",
+    fechaLanzamiento: ISODate("2018-06-15"),
+    calificacionPEGI: "7+",
+    imagenURL: "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wla.jpg"
+  }
+]);
+
+print("✅ " + nuevosVideojuegos.insertedIds.length + " nuevos videojuegos agregados con imágenes");
+
+// ================================================
+// VERIFICAR ACTUALIZACIÓN
+// ================================================
+print("\n📊 Verificando actualización...");
+
+var videojuegosSinImagen = db.videojuegos.countDocuments({ imagenURL: { $exists: false } });
+var videojuegosConImagen = db.videojuegos.countDocuments({ imagenURL: { $exists: true } });
+
+print("Videojuegos sin imagen: " + videojuegosSinImagen);
+print("Videojuegos con imagen: " + videojuegosConImagen);
+print("Total de videojuegos: " + db.videojuegos.countDocuments());
+
+// ================================================
+// MOSTRAR ALGUNOS EJEMPLOS
+// ================================================
+print("\n📷 Ejemplos de videojuegos con imágenes:");
+db.videojuegos.find({}, { titulo: 1, imagenURL: 1 }).limit(5).forEach(
+  function(doc) {
+    print("- " + doc.titulo + ": " + (doc.imagenURL || "Sin imagen"));
+  }
+);
+
+print("\n✅ ACTUALIZACIÓN COMPLETADA");
+print("Todos los videojuegos ahora tienen URLs de imágenes");
+
+// ================================================
+// URLS DE IMÁGENES DE RESPALDO (por si necesitas más)
+// ================================================
+print("\n📋 URLs de imágenes de respaldo disponibles:");
+print("https://via.placeholder.com/300x400/0066cc/ffffff?text=Game+Cover");
+print("https://via.placeholder.com/300x400/cc6600/ffffff?text=Videojuego");
+print("https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300&h=400");
+
+// Para videojuegos sin imagen específica, puedes usar:
+/*
+db.videojuegos.updateMany(
+  { imagenURL: { $exists: false } },
+  { $set: { imagenURL: "https://via.placeholder.com/300x400/0066cc/ffffff?text=Game+Cover" } }
+);
+*/

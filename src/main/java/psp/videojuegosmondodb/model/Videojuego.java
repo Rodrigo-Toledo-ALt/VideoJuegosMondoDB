@@ -46,4 +46,7 @@ public class Videojuego {
 
     @NotBlank(message = "La calificación PEGI es obligatoria")
     private String calificacionPEGI;
+
+    // Nuevo campo para la URL de la imagen de portada
+    private String imagenURL;
 }

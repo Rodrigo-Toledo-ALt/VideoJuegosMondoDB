@@ -24,8 +24,8 @@ public class VideojuegoService {
     private final DesarrolladorRepository desarrolladorRepository;
 
     public VideojuegoService(VideojuegoRepository videojuegoRepository,
-                            GeneroRepository generoRepository,
-                            DesarrolladorRepository desarrolladorRepository) {
+                             GeneroRepository generoRepository,
+                             DesarrolladorRepository desarrolladorRepository) {
         this.videojuegoRepository = videojuegoRepository;
         this.generoRepository = generoRepository;
         this.desarrolladorRepository = desarrolladorRepository;
@@ -120,6 +120,7 @@ public class VideojuegoService {
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
+
     /**
      * Crea un nuevo videojuego
      * @param dto datos del nuevo videojuego
@@ -141,7 +142,7 @@ public class VideojuegoService {
         if (!videojuegoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Videojuego", "id", id);
         }
-        
+
         Videojuego videojuego = mapToEntity(dto);
         videojuego.setId(id);
         Videojuego videojuegoActualizado = videojuegoRepository.save(videojuego);
@@ -171,17 +172,18 @@ public class VideojuegoService {
         dto.setPlataforma(videojuego.getPlataforma());
         dto.setFechaLanzamiento(videojuego.getFechaLanzamiento());
         dto.setCalificacionPEGI(videojuego.getCalificacionPEGI());
-        
+        dto.setImagenURL(videojuego.getImagenURL()); // Campo imagenURL agregado
+
         if (videojuego.getGenero() != null) {
             dto.setGeneroId(videojuego.getGenero().getId());
             dto.setGeneroNombre(videojuego.getGenero().getNombre());
         }
-        
+
         if (videojuego.getDesarrollador() != null) {
             dto.setDesarrolladorId(videojuego.getDesarrollador().getId());
             dto.setDesarrolladorNombre(videojuego.getDesarrollador().getNombreEstudio());
         }
-        
+
         return dto;
     }
 
@@ -199,21 +201,22 @@ public class VideojuegoService {
         videojuego.setPlataforma(dto.getPlataforma());
         videojuego.setFechaLanzamiento(dto.getFechaLanzamiento());
         videojuego.setCalificacionPEGI(dto.getCalificacionPEGI());
-        
+        videojuego.setImagenURL(dto.getImagenURL()); // Campo imagenURL agregado
+
         // Obtener género por ID
         if (dto.getGeneroId() != null && !dto.getGeneroId().isEmpty()) {
             Genero genero = generoRepository.findById(dto.getGeneroId())
                     .orElseThrow(() -> new ResourceNotFoundException("Género", "id", dto.getGeneroId()));
             videojuego.setGenero(genero);
         }
-        
+
         // Obtener desarrollador por ID
         if (dto.getDesarrolladorId() != null && !dto.getDesarrolladorId().isEmpty()) {
             Desarrollador desarrollador = desarrolladorRepository.findById(dto.getDesarrolladorId())
                     .orElseThrow(() -> new ResourceNotFoundException("Desarrollador", "id", dto.getDesarrolladorId()));
             videojuego.setDesarrollador(desarrollador);
         }
-        
+
         return videojuego;
     }
 }
