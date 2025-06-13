@@ -2,13 +2,10 @@
 // SCRIPT PASO A PASO - VIDEOJUEGOS DB
 // ================================================
 
-// 1. CONECTAR Y CREAR BASE DE DATOS
-print("=== PASO 1: Creando base de datos ===");
 use videojuegos_db;
-print("Base de datos 'videojuegos_db' seleccionada");
 
-// 2. CREAR COLECCIONES
-print("\n=== PASO 2: Creando colecciones ===");
+
+
 
 // Crear colección de géneros con validación
 db.createCollection("generos", {
@@ -25,7 +22,7 @@ db.createCollection("generos", {
       }
    }
 });
-print("✓ Colección 'generos' creada");
+
 
 // Crear colección de desarrolladores con validación
 db.createCollection("desarrolladores", {
@@ -52,7 +49,7 @@ db.createCollection("desarrolladores", {
       }
    }
 });
-print("✓ Colección 'desarrolladores' creada");
+
 
 // Crear colección de usuarios con validación
 db.createCollection("usuarios", {
@@ -82,65 +79,55 @@ db.createCollection("usuarios", {
       }
    }
 });
-print("✓ Colección 'usuarios' creada");
+
 
 // Crear colección de videojuegos
 db.createCollection("videojuegos");
-print("✓ Colección 'videojuegos' creada");
+
 
 // Crear colección de valoraciones
 db.createCollection("valoraciones");
-print("✓ Colección 'valoraciones' creada");
 
-// 3. CREAR ÍNDICES
-print("\n=== PASO 3: Creando índices ===");
+
+
 
 // Índices para usuarios
 db.usuarios.createIndex({ "email": 1 }, { unique: true });
-print("✓ Índice único en usuarios.email");
+
 
 // Índices para géneros
 db.generos.createIndex({ "nombre": 1 }, { unique: true });
-print("✓ Índice único en generos.nombre");
+
 
 // Índices para desarrolladores
 db.desarrolladores.createIndex({ "nombreEstudio": 1 }, { unique: true });
-print("✓ Índice único en desarrolladores.nombreEstudio");
+
 
 // Índices para videojuegos
 db.videojuegos.createIndex({ "titulo": 1 });
 db.videojuegos.createIndex({ "genero": 1 });
 db.videojuegos.createIndex({ "desarrollador": 1 });
 db.videojuegos.createIndex({ "plataforma": 1 });
-print("✓ Índices en videojuegos creados");
+
 
 // Índices para valoraciones
 db.valoraciones.createIndex({ "usuario": 1, "videojuego": 1 }, { unique: true });
 db.valoraciones.createIndex({ "videojuego": 1 });
-print("✓ Índices en valoraciones creados");
+
 
 // 4. VERIFICAR ESTRUCTURA
 print("\n=== PASO 4: Verificando estructura ===");
 print("Colecciones en la base de datos:");
 db.listCollectionNames().forEach(function(collection) {
-    print("- " + collection);
+
 });
 
-// 5. INSERTAR DATOS DE PRUEBA
-print("\n=== PASO 5: ¿Insertar datos de prueba? ===");
-print("Para insertar datos de ejemplo, ejecuta el siguiente comando:");
-print("load('datos_ejemplo.js')");
-print("");
-print("O copia y pega los datos del script principal.");
 
-print("\n=== CONFIGURACIÓN COMPLETADA ===");
-print("Base de datos lista para usar con Spring Boot");
-print("Conexión: mongodb://localhost:27017/videojuegos_db");
 
 // ================================================
 // 7. CREAR COLECCIÓN DE VALORACIONES
 // ================================================
-print("\n⭐ Paso 7: Creando valoraciones...");
+
 var valoracionesInsertadas = db.valoraciones.insertMany([
   {
     _id: ObjectId("507f1f77bcf86cd799439061"),
@@ -548,7 +535,7 @@ print("✅ URLs de imágenes añadidas a todos los videojuegos existentes");
 // ================================================
 // AGREGAR NUEVOS VIDEOJUEGOS CON IMÁGENES
 // ================================================
-print("\n🎮 Agregando nuevos videojuegos con imágenes...");
+
 
 var nuevosVideojuegos = db.videojuegos.insertMany([
   {
@@ -583,32 +570,9 @@ var nuevosVideojuegos = db.videojuegos.insertMany([
   }
 ]);
 
-print("✅ " + nuevosVideojuegos.insertedIds.length + " nuevos videojuegos agregados con imágenes");
 
-// ================================================
-// VERIFICAR ACTUALIZACIÓN
-// ================================================
-print("\n📊 Verificando actualización...");
 
-var videojuegosSinImagen = db.videojuegos.countDocuments({ imagenURL: { $exists: false } });
-var videojuegosConImagen = db.videojuegos.countDocuments({ imagenURL: { $exists: true } });
 
-print("Videojuegos sin imagen: " + videojuegosSinImagen);
-print("Videojuegos con imagen: " + videojuegosConImagen);
-print("Total de videojuegos: " + db.videojuegos.countDocuments());
-
-// ================================================
-// MOSTRAR ALGUNOS EJEMPLOS
-// ================================================
-print("\n📷 Ejemplos de videojuegos con imágenes:");
-db.videojuegos.find({}, { titulo: 1, imagenURL: 1 }).limit(5).forEach(
-  function(doc) {
-    print("- " + doc.titulo + ": " + (doc.imagenURL || "Sin imagen"));
-  }
-);
-
-print("\n✅ ACTUALIZACIÓN COMPLETADA");
-print("Todos los videojuegos ahora tienen URLs de imágenes");
 
 // ================================================
 // URLS DE IMÁGENES DE RESPALDO (por si necesitas más)
